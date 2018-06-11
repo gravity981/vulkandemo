@@ -7,29 +7,13 @@
 #include <glm/mat4x4.hpp>
 
 #include <iostream>
+#include "HelloTriangleApplication.h"
 
 int main(int argc, char* argv[]) {
-	glfwInit();
 
-	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	GLFWwindow* window = glfwCreateWindow(800, 600, "Vulkan window", nullptr, nullptr);
+	HelloTriangleApplication app;
 
-	uint32_t extensionCount = 0;
-	vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
+	app.run();
 
-	std::cout << extensionCount << " extensions supported" << std::endl;
-
-	glm::mat4 matrix;
-	glm::vec4 vec(0,0,0,0);
-	auto test = matrix * vec;
-
-	while (!glfwWindowShouldClose(window)) {
-		glfwPollEvents();
-	}
-
-	glfwDestroyWindow(window);
-
-	glfwTerminate();
-
-	return 0;
+	return EXIT_SUCCESS;
 }
