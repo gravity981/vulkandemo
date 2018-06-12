@@ -7,4 +7,4 @@ include(Sources.cmake)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-target_link_libraries(${PROJECT_NAME} glfw3 vulkan-1)
+target_link_libraries(${PROJECT_NAME} vulkan-1 glfw3)
