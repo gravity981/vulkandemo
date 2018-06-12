@@ -9,10 +9,16 @@ class HelloTriangleApplication
 private:
 	struct QueueFamilyIndices {
 		int graphicsFamily = -1;
+		int presentFamily = -1;
 
 		bool isComplete() {
-			return graphicsFamily >= 0;
+			return graphicsFamily >= 0 && presentFamily >= 0;
 		}
+	};
+	struct SwapChainSupportDetails {
+		VkSurfaceCapabilitiesKHR capabilities;
+		std::vector<VkSurfaceFormatKHR> formats;
+		std::vector<VkPresentModeKHR> presentModes;
 	};
 	const int WIDTH = 800;
 	const int HEIGHT = 600;
@@ -23,10 +29,19 @@ private:
 	VkDevice m_device;
 	VkQueue m_graphicsQueue;
 	VkSurfaceKHR m_surface;
+	VkQueue m_presentQueue;
+	VkSwapchainKHR m_swapChain;
+	std::vector<VkImage> m_swapChainImages;
+	VkFormat m_swapChainImageFormat;
+	VkExtent2D m_swapChainExtent;
 
 	const std::vector<const char*> m_validationLayers = {
 		"VK_LAYER_LUNARG_standard_validation"
 	};
+
+	const std::vector<const char*> m_deviceExtensions = {
+		VK_KHR_SWAPCHAIN_EXTENSION_NAME
+};
 
 #ifdef NDEBUG
 	const bool m_enableValidationLayers = false;
@@ -48,12 +63,19 @@ private:
 	void pickPhysicalDevice();
 	void createLogicalDevice();
 	void createSurface();
+	void createSwapChain();
 
 	int rateDeviceSuitability(VkPhysicalDevice device);
-	void checkRequiredExtensions(std::vector<const char*>& requiredExtensions);
+	void checkRequiredInstanceExtensions(std::vector<const char*>& requiredExtensions);
 	void checkValidationLayerSupport();
-	std::vector<const char*> getRequiredExtensions();
+	bool checkDeviceExtensionSupport(VkPhysicalDevice device);
+	std::vector<const char*> getRequiredInstanceExtensions();
 	QueueFamilyIndices findRequiredQueueFamilies(VkPhysicalDevice device);
+	SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
+	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR> availablePresentModes);
+	VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType,
 	                                                    uint64_t obj,
 	                                                    size_t location, int32_t code, const char* layerPrefix,
