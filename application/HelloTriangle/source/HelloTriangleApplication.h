@@ -22,6 +22,7 @@ private:
 	};
 	const int WIDTH = 800;
 	const int HEIGHT = 600;
+	const size_t MAX_FRAMES_IN_FLIGHT = 2;
 	GLFWwindow* m_window;
 	VkInstance m_instance;
 	VkDebugReportCallbackEXT m_debugCallback;
@@ -34,6 +35,19 @@ private:
 	std::vector<VkImage> m_swapChainImages;
 	VkFormat m_swapChainImageFormat;
 	VkExtent2D m_swapChainExtent;
+	std::vector<VkImageView> m_swapChainImageViews;
+	VkShaderModule m_vertShaderModule;
+	VkShaderModule m_fragShaderModule;
+	VkPipelineLayout m_pipelineLayout;
+	VkRenderPass m_renderPass;
+	VkPipeline m_graphicsPipeline;
+	std::vector<VkFramebuffer> m_swapChainFramebuffers;
+	VkCommandPool m_commandPool;
+	std::vector<VkCommandBuffer> m_commandBuffers;
+	std::vector<VkSemaphore> m_imageAvailableSemaphores;
+	std::vector<VkSemaphore> m_renderFinishedSemaphores;
+	std::vector<VkFence> m_inFlightFences;
+	size_t m_currentFrame = 0;
 
 	const std::vector<const char*> m_validationLayers = {
 		"VK_LAYER_LUNARG_standard_validation"
@@ -58,12 +72,21 @@ private:
 	void mainLoop();
 	void cleanup();
 
+	void drawFrame();
+
 	void createInstance();
 	void setupDebugCallback();
 	void pickPhysicalDevice();
 	void createLogicalDevice();
 	void createSurface();
 	void createSwapChain();
+	void createImageViews();
+	void createGraphicsPipeline();
+	void createRenderPass();
+	void createFrameBuffers();
+	void createCommandPool();
+	void createCommandBuffers();
+	void createSyncObjects();
 
 	int rateDeviceSuitability(VkPhysicalDevice device);
 	void checkRequiredInstanceExtensions(std::vector<const char*>& requiredExtensions);
@@ -75,6 +98,7 @@ private:
 	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR> availablePresentModes);
 	VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+	VkShaderModule createShaderModule(const std::vector<char>& code);
 
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType,
 	                                                    uint64_t obj,
@@ -93,4 +117,6 @@ private:
 		VkInstance instance, 
 		VkDebugReportCallbackEXT callback, 
 		const VkAllocationCallbacks* pAllocator);
+
+	static std::vector<char> readFile(const std::string& filename);
 };
