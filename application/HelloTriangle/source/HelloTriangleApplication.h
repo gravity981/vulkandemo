@@ -88,6 +88,9 @@ private:
 	void createCommandBuffers();
 	void createSyncObjects();
 
+	void cleanupSwapChain();
+	void recreateSwapChain();
+
 	int rateDeviceSuitability(VkPhysicalDevice device);
 	void checkRequiredInstanceExtensions(std::vector<const char*>& requiredExtensions);
 	void checkValidationLayerSupport();
